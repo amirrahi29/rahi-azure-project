@@ -2,9 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rahiapp-deployment
+  labels:
+    app: rahiapp
 
 spec:
-  replicas: 2   # initial pods (HPA baad me control karega)
+  replicas: 2   # initial, HPA will manage scaling
+
+  revisionHistoryLimit: 5   # rollback history
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
 
   selector:
     matchLabels:
@@ -20,14 +30,15 @@ spec:
         - name: rahiapp
           image: rahiregistry.azurecr.io/rahi-app-image:latest
 
+          imagePullPolicy: Always   # always pull latest image
+
           ports:
             - containerPort: 8082
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: dev   # 👈 change env (dev,prod,stag,uat)
+              value: dev
 
-          # 🔥 IMPORTANT for HPA
           resources:
             requests:
               cpu: "100m"
@@ -42,6 +53,8 @@ spec:
               port: 8082
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
 
           livenessProbe:
             httpGet:
@@ -49,3 +62,19 @@ spec:
               port: 8082
             initialDelaySeconds: 15
             periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            failureThreshold: 30
+            periodSeconds: 5
+
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+
+      terminationGracePeriodSeconds: 30
