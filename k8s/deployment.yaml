@@ -4,7 +4,7 @@ metadata:
   name: rahiapp-deployment
 
 spec:
-  replicas: 2
+  replicas: 2   # initial pods (HPA baad me control karega)
 
   selector:
     matchLabels:
@@ -18,14 +18,23 @@ spec:
     spec:
       containers:
         - name: rahiapp
-          image: rahiregistry.azurecr.io/rahi-app-image:latest  # placeholder only
+          image: rahiregistry.azurecr.io/rahi-app-image:latest
 
           ports:
             - containerPort: 8082
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: stag
+              value: dev   # 👈 change env (dev,prod,stag,uat)
+
+          # 🔥 IMPORTANT for HPA
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 
           readinessProbe:
             httpGet:

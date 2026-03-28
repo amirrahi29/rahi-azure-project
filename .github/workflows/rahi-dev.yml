@@ -56,6 +56,7 @@ jobs:
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/hpa.yaml
 
       # 9. Update image (dynamic)
       - name: Update image in AKS
@@ -66,7 +67,7 @@ jobs:
       # 10. Verify rollout
       - name: Check rollout status
         run: |
-          kubectl rollout status deployment/rahiapp-deployment --timeout=60s
+          kubectl rollout status deployment/rahiapp-deployment --timeout=120s
 
       # 11. Auto rollback if failed
       - name: Rollback if deployment fails
@@ -74,3 +75,9 @@ jobs:
         run: |
           echo "Deployment failed. Rolling back..."
           kubectl rollout undo deployment/rahiapp-deployment
+
+      # 12. Verify rollback
+      - name: Verify rollback
+        if: failure()
+        run: |
+          kubectl rollout status deployment/rahiapp-deployment
