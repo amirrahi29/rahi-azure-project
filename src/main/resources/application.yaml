@@ -6,4 +6,4 @@ server:
   port: 8082
 
 env:
-  name: main
+  name: default
