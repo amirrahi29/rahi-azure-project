@@ -37,7 +37,7 @@ spec:
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: dev
+              value: prod
 
           resources:
             requests:
