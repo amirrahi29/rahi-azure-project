@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Rahi-App
+
+server:
+  port: 8082
+
+env:
+  name: production

@@ -48,6 +48,11 @@ jobs:
         run: |
           sed -i "s/IMAGE_TAG_PLACEHOLDER/${{ github.sha }}/g" k8s/deployment.yaml
 
+      # set environments
+      - name: Set Spring Profile
+        run: |
+          kubectl set env deployment/rahiapp-deployment SPRING_PROFILES_ACTIVE=dev --overwrite
+
       # 8. Set AKS context
       - name: Set AKS Context
         uses: azure/aks-set-context@v1
