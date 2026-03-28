@@ -65,4 +65,4 @@ jobs:
       # 10. Set env AFTER deploy
       - name: Set Spring Profile
         run: |
-          kubectl set env deployment/rahiapp-deployment SPRING_PROFILES_ACTIVE=stag --overwrite
+          kubectl set env deployment/rahiapp-deployment SPRING_PROFILES_ACTIVE=prod --overwrite
