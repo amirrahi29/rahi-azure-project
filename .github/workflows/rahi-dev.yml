@@ -26,13 +26,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      # 4. Azure Login (FIRST)
+      # 4. Azure Login
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 5. ACR Login (better via az)
+      # 5. ACR Login
       - name: Login to ACR
         run: |
           az acr login --name rahiregistry
@@ -48,11 +48,6 @@ jobs:
         run: |
           sed -i "s/IMAGE_TAG_PLACEHOLDER/${{ github.sha }}/g" k8s/deployment.yaml
 
-      # set environments
-      - name: Set Spring Profile
-        run: |
-          kubectl set env deployment/rahiapp-deployment SPRING_PROFILES_ACTIVE=dev --overwrite
-
       # 8. Set AKS context
       - name: Set AKS Context
         uses: azure/aks-set-context@v1
@@ -61,8 +56,13 @@ jobs:
           cluster-name: RahiCluster
           resource-group: rahi-resource
 
-      # 9. Deploy
+      # 9. Deploy FIRST
       - name: Deploy to AKS
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+
+      # 10. Set env AFTER deploy
+      - name: Set Spring Profile
+        run: |
+          kubectl set env deployment/rahiapp-deployment SPRING_PROFILES_ACTIVE=dev --overwrite
