@@ -16,4 +16,9 @@ public class TestController {
     public String test(){
         return "This is : "+envName;
     }
+
+    @GetMapping("/fail")
+    public String fail() {
+        throw new RuntimeException("Failing intentionally");
+    }
 }

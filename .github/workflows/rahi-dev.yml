@@ -66,4 +66,11 @@ jobs:
       # 10. Verify rollout
       - name: Check rollout status
         run: |
-          kubectl rollout status deployment/rahiapp-deployment
+          kubectl rollout status deployment/rahiapp-deployment --timeout=60s
+
+      # 11. Auto rollback if failed
+      - name: Rollback if deployment fails
+        if: failure()
+        run: |
+          echo "Deployment failed. Rolling back..."
+          kubectl rollout undo deployment/rahiapp-deployment

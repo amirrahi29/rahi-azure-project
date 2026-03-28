@@ -25,11 +25,11 @@ spec:
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: prod
+              value: stag
 
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /api/fail
               port: 8082
             initialDelaySeconds: 10
             periodSeconds: 10
