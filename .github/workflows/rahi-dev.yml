@@ -39,3 +39,27 @@ jobs:
         run: |
           docker build -t rahiregistry.azurecr.io/rahi-app-image:${{ github.sha }} .
           docker push rahiregistry.azurecr.io/rahi-app-image:${{ github.sha }}
+
+      # -------------------------------
+      # AKS DEPLOYMENT START
+      # -------------------------------
+
+      # 8. Azure Login
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 9. Set AKS context
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster-name: RahiCluster
+          resource-group: rahi-resource
+
+      # 10. Deploy to AKS
+      - name: Deploy to AKS
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
