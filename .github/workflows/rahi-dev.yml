@@ -31,6 +31,10 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: listFilesInBugsSpace
+        run: |
+          ls -r
+
       - name: Replace image tag in deployment
         run: |
           sed -i "s/IMAGE_TAG_PLACEHOLDER/${{ github.sha }}/g" k8s/deployment.yaml
