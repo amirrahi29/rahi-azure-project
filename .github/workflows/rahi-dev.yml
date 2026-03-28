@@ -43,12 +43,7 @@ jobs:
           docker build -t rahiregistry.azurecr.io/rahi-app-image:${{ github.sha }} .
           docker push rahiregistry.azurecr.io/rahi-app-image:${{ github.sha }}
 
-      # 7. Replace image tag
-      - name: Update deployment image
-        run: |
-          sed -i "s/IMAGE_TAG_PLACEHOLDER/${{ github.sha }}/g" k8s/deployment.yaml
-
-      # 8. Set AKS context
+      # 7. Set AKS context
       - name: Set AKS Context
         uses: azure/aks-set-context@v1
         with:
@@ -56,8 +51,19 @@ jobs:
           cluster-name: RahiCluster
           resource-group: rahi-resource
 
-      # 9. Deploy to AKS
-      - name: Deploy to AKS
+      # 8. Apply Kubernetes YAML
+      - name: Deploy base manifests
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+
+      # 9. Update image (dynamic)
+      - name: Update image in AKS
+        run: |
+          kubectl set image deployment/rahiapp-deployment \
+          rahiapp=rahiregistry.azurecr.io/rahi-app-image:${{ github.sha }}
+
+      # 10. Verify rollout
+      - name: Check rollout status
+        run: |
+          kubectl rollout status deployment/rahiapp-deployment

@@ -18,14 +18,14 @@ spec:
     spec:
       containers:
         - name: rahiapp
-          image: rahiregistry.azurecr.io/rahi-app-image:IMAGE_TAG_PLACEHOLDER
+          image: rahiregistry.azurecr.io/rahi-app-image:latest  # placeholder only
 
           ports:
             - containerPort: 8082
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: uat   # ✅ yahin set hoga
+              value: uat
 
           readinessProbe:
             httpGet:
