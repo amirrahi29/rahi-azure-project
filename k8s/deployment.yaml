@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: rahiapp
-          image: rahiiregistry.azurecr.io/rahi-app-image:IMAGE_TAG_PLACEHOLDER
+          image: rahiregistry.azurecr.io/rahi-app-image:IMAGE_TAG_PLACEHOLDER
           ports:
             - containerPort: 8082
 
